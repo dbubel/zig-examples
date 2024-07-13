@@ -1,15 +1,16 @@
 const std = @import("std");
 pub fn main() !void {
-    const file = try std.fs.cwd().openFile("README.md", .{});
+    const file = try std.fs.cwd().openFile("output.txt", .{});
     defer file.close();
 
     var buf_reader = std.io.bufferedReader(file.reader());
     const reader = buf_reader.reader();
 
-    var line: [1024]u8 = undefined;
+    var line: [512]u8 = undefined;
     var writer = std.io.fixedBufferStream(&line);
 
     while (true) {
+        defer writer.reset();
         reader.streamUntilDelimiter(writer.writer(), '\n', null) catch |err| {
             switch (err) {
                 error.EndOfStream => {
@@ -21,8 +22,7 @@ pub fn main() !void {
             }
         };
 
-        std.debug.print("SIZE {any}", .{writer.pos});
-        std.debug.print("{s}\n", .{line[0..writer.pos]});
-        writer.reset();
+        // std.debug.print("SIZE {any}", .{writer.pos});
+        // std.debug.print("{s}\n", .{line[0..writer.pos]});
     }
 }
