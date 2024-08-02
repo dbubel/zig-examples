@@ -2,6 +2,7 @@ const std = @import("std");
 const print = std.debug.print;
 
 pub fn main() !void {
+    std.fs.cwd().create ejj
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     defer _ = gpa.deinit();
     const allocator = gpa.allocator();
