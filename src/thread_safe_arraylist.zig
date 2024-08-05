@@ -1,4 +1,5 @@
 const std = @import("std");
+
 pub fn ThreadSafeArrayList(comptime T: type) type {
     return struct {
         list: std.ArrayList(T),
@@ -16,7 +17,12 @@ pub fn ThreadSafeArrayList(comptime T: type) type {
             defer c.mutext.unlock();
             try c.list.append(value);
         }
+        pub fn getAt(c: *ThreadSafeArrayList(T), idx: usize) *T {
+            return &c.list.items[idx];
+        }
         pub fn deinit(c: *ThreadSafeArrayList(T)) void {
+            c.mutext.lock();
+            defer c.mutext.unlock();
             c.list.deinit();
         }
     };
